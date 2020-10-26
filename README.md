@@ -15,3 +15,6 @@ composer require imo-tikuwa/cakephp-utils
 bin/cake plugin load Utilities
 ```
 
+## Commands
+ - [execute_all_migrations_and_seeds](https://github.com/imo-tikuwa/cakephp-utils/blob/master/src/Command/ExecuteAllMigrationsAndSeedsCommand.php)
+
