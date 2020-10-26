@@ -7,5 +7,11 @@ You can install this plugin into your CakePHP application using [composer](https
 The recommended way to install composer packages is:
 
 ```
-composer require your-name-here/utilities
+composer require imo-tikuwa/cakephp-utils
 ```
+
+## Usage
+```
+bin/cake plugin load Utilities
+```
+
