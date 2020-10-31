@@ -71,7 +71,7 @@ class EntityHelper extends Helper
         $hidden_fields = $entities[0]->getHidden();
         $output_fields = array_keys($entities[0]->getOriginalValues());
         if (!empty($hidden_fields) && !$this->getConfig('hiddenField')) {
-            $output_fields = array_diff($output_fields, $entities[0]->getHidden());
+            $output_fields = array_diff($output_fields, $hidden_fields);
         }
 
         $outputs = [];
