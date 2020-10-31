@@ -34,6 +34,9 @@ class EntityHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
+        // When true, the hidden column is output.
+        'hiddenField' => false,
+        // The following 3 properties are \Cake\Shell\Helper\TableHelper
         'headers' => true,
         'rowSeparator' => false,
         'headerStyle' => 'info',
@@ -46,10 +49,12 @@ class EntityHelper extends Helper
     {
         if (is_null($args)) {
             $this->_io->abort('$args is null');
-        } elseif (!is_array($args)) {
-            $entities = [$args];
+        } elseif (!isset($args['target'])) {
+            $this->_io->abort('$args[\'target\'] is required');
+        } elseif (!is_array($args['target'])) {
+            $entities = [$args['target']];
         } else {
-            $entities = $args;
+            $entities = $args['target'];
         }
 
         // entity check.
@@ -62,19 +67,27 @@ class EntityHelper extends Helper
             return;
         }
 
+        // exclude hidden fields.
+        $hidden_fields = $entities[0]->getHidden();
+        $output_fields = array_keys($entities[0]->getOriginalValues());
+        if (!empty($hidden_fields) && !$this->getConfig('hiddenField')) {
+            $output_fields = array_diff($output_fields, $entities[0]->getHidden());
+        }
+
         $outputs = [];
         if ($this->getConfig('headers') === true) {
-            $outputs[] = array_keys($entities[0]->getOriginalValues());
+            $outputs[] = $output_fields;
         }
         foreach ($entities as $entity) {
             $output = [];
-            foreach ($entity->getOriginalValues() as $value) {
-                if (is_null($value)) {
+            foreach ($entity->getOriginalValues() as $field => $value) {
+                if (!in_array($field, $output_fields, true)) {
+                    continue;
+                } elseif (is_null($value)) {
                     $output[] = '';
                 } elseif (is_int($value) || is_float($value) || is_bool($value)) {
                     $output[] = (string) $value;
                 } elseif (is_array($value)) {
-                    // json column case.
                     $output[] = json_encode($value);
                 } elseif ($value instanceof \Cake\I18n\FrozenDate || $value instanceof \Cake\I18n\FrozenTime) {
                     $output[] = $value->i18nFormat();
