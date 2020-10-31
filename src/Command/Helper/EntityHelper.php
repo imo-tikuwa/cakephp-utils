@@ -71,8 +71,7 @@ class EntityHelper extends Helper
             foreach ($entity->getOriginalValues() as $value) {
                 if (is_null($value)) {
                     $output[] = '';
-                } elseif (is_int($value) || is_float($value)) {
-                    // int column case.
+                } elseif (is_int($value) || is_float($value) || is_bool($value)) {
                     $output[] = (string) $value;
                 } elseif (is_array($value)) {
                     // json column case.
