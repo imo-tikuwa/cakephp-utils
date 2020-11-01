@@ -52,9 +52,7 @@ class EntityHelper extends Helper
      */
     public function output($args): void
     {
-        if (is_null($args)) {
-            $this->_io->abort('$args is null');
-        } elseif (!isset($args['target'])) {
+        if (!isset($args['target'])) {
             $this->_io->abort('$args[\'target\'] is required');
         } elseif (!is_array($args['target'])) {
             $entities = [$args['target']];
