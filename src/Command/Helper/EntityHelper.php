@@ -16,14 +16,26 @@ use Cake\Console\Helper;
  * ```
  * public function execute(Arguments $args, ConsoleIo $io)
  * {
- *   $this->loadModel('Users');
+ *   $this->loadModel('Articles');
  *
- *   $entity = $this->Users->find()->first();
+ *   $entity = $this->Articles->find()->first();
  *   $io->helper('Utilities.Entity')->output($entity);
  *
- *   $entities = $this->Users->find()->toArray();
+ *   $entities = $this->Articles->find()->toArray();
  *   $io->helper('Utilities.Entity')->output($entities);
  * }
+ * ```
+ *
+ * If you don't want to see some fields, you can control the display by doing setHidden on the first entity.
+ * (Properties set in the entity with $ _hidden are hidden by default.)
+ * ```
+ *   $entity = $this->Articles->find()->first();
+ *   $entity->setHidden(['slug', 'created']);
+ *   $io->helper('Utilities.Entity')->output($entity);
+ *
+ *   $entities = $this->Articles->find()->toArray();
+ *   $entities[0]->setHidden(['slug', 'created']);
+ *   $io->helper('Utilities.Entity')->output($entities);
  * ```
  */
 class EntityHelper extends Helper
@@ -92,7 +104,7 @@ class EntityHelper extends Helper
                     continue;
                 } elseif (is_null($value)) {
                     $output[] = '';
-                } elseif ($value instanceof \Cake\ORM\Entity || (is_array($value) && $value[0] instanceof \Cake\ORM\Entity)) {
+                } elseif ($value instanceof \Cake\ORM\Entity || (is_array($value) && @$value[0] instanceof \Cake\ORM\Entity)) {
                     $output[] = $this->_substr(json_encode($value, JSON_UNESCAPED_UNICODE), $this->getConfig('relationStrLength'));
                 } elseif (is_int($value) || is_float($value) || is_bool($value)) {
                     $output[] = (string) $value;
