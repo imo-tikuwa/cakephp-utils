@@ -104,7 +104,7 @@ class EntityHelper extends Helper
                     continue;
                 } elseif (is_null($value)) {
                     $output[] = '';
-                } elseif ($value instanceof \Cake\ORM\Entity || (is_array($value) && @$value[0] instanceof \Cake\ORM\Entity)) {
+                } elseif ($value instanceof \Cake\ORM\Entity || (is_array($value) && isset($value[0]) && $value[0] instanceof \Cake\ORM\Entity)) {
                     $output[] = $this->_substr(json_encode($value, JSON_UNESCAPED_UNICODE), $this->getConfig('relationStrLength'));
                 } elseif (is_int($value) || is_float($value) || is_bool($value)) {
                     $output[] = (string) $value;
