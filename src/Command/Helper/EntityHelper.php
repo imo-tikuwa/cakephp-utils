@@ -36,6 +36,11 @@ class EntityHelper extends Helper
     protected $_defaultConfig = [
         // When true, the hidden column is output.
         'hiddenField' => false,
+        // Upper limit of the number of display characters per column
+        // (character strings that exceed the specified number are replaced with ...).
+        // Show everything when null is set.
+        // This setting is valid for varchar, text and json items.
+        'eachStrLength' => 30,
         // The following 3 properties are \Cake\Shell\Helper\TableHelper
         'headers' => true,
         'rowSeparator' => false,
@@ -88,16 +93,31 @@ class EntityHelper extends Helper
                 } elseif (is_int($value) || is_float($value) || is_bool($value)) {
                     $output[] = (string) $value;
                 } elseif (is_array($value)) {
-                    $output[] = json_encode($value);
+                    $output[] = $this->_substr(json_encode($value));
                 } elseif ($value instanceof \Cake\I18n\FrozenDate || $value instanceof \Cake\I18n\FrozenTime) {
                     $output[] = $value->i18nFormat();
                 } else {
-                    $output[] = $value;
+                    $output[] = $this->_substr(str_replace(["\r", "\n"], '', $value));
                 }
             }
             $outputs[] = $output;
         }
 
         $this->_io->helper('Table', $this->getConfig())->output($outputs);
+    }
+
+    /**
+     * Extract the character string by referring to the setting value of eachStrLength
+     *
+     * @param string $str substring target.
+     * @return string
+     */
+    protected function _substr($str)
+    {
+        $each_str_length = $this->getConfig('eachStrLength');
+        if (!is_null($each_str_length) && mb_strlen($str) > (int) $each_str_length) {
+            return mb_substr($str, 0, $each_str_length) . '...';
+        }
+        return $str;
     }
 }
