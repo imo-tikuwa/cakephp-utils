@@ -41,6 +41,10 @@ class EntityHelper extends Helper
         // Show everything when null is set.
         // This setting is valid for varchar, text and json items.
         'eachStrLength' => 30,
+        // Upper limit of the number of characters that can be displayed at the relation destination.
+        // (The relation destination data is converted to a character string with json_encode and displayed.)
+        // Show everything when null is set.
+        'relationStrLength' => 50,
         // The following 3 properties are \Cake\Shell\Helper\TableHelper
         'headers' => true,
         'rowSeparator' => false,
@@ -88,14 +92,16 @@ class EntityHelper extends Helper
                     continue;
                 } elseif (is_null($value)) {
                     $output[] = '';
+                } elseif ($value instanceof \Cake\ORM\Entity || (is_array($value) && $value[0] instanceof \Cake\ORM\Entity)) {
+                    $output[] = $this->_substr(json_encode($value, JSON_UNESCAPED_UNICODE), $this->getConfig('relationStrLength'));
                 } elseif (is_int($value) || is_float($value) || is_bool($value)) {
                     $output[] = (string) $value;
                 } elseif (is_array($value)) {
-                    $output[] = $this->_substr(json_encode($value));
+                    $output[] = $this->_substr(json_encode($value, JSON_UNESCAPED_UNICODE), $this->getConfig('eachStrLength'));
                 } elseif ($value instanceof \Cake\I18n\FrozenDate || $value instanceof \Cake\I18n\FrozenTime) {
                     $output[] = $value->i18nFormat();
                 } else {
-                    $output[] = $this->_substr(str_replace(["\r", "\n"], '', $value));
+                    $output[] = $this->_substr(str_replace(["\r", "\n"], '', $value), $this->getConfig('eachStrLength'));
                 }
             }
             $outputs[] = $output;
@@ -108,13 +114,13 @@ class EntityHelper extends Helper
      * Extract the character string by referring to the setting value of eachStrLength
      *
      * @param string $str substring target.
+     * @param int|null $length substring length.
      * @return string
      */
-    protected function _substr($str)
+    protected function _substr($str, $length = null)
     {
-        $each_str_length = $this->getConfig('eachStrLength');
-        if (!is_null($each_str_length) && mb_strlen($str) > (int) $each_str_length) {
-            return mb_substr($str, 0, $each_str_length) . '...';
+        if (!is_null($length) && $length != '' && mb_strlen($str) > (int) $length) {
+            return mb_substr($str, 0, $length) . '...';
         }
         return $str;
     }
