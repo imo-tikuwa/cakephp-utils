@@ -63,7 +63,7 @@ class ExecuteAllMigrationsAndSeedsCommand extends Command
             }
 
             $io->out("execute {$table_name}'s seed.");
-            $this->executeCommand(MigrationsSeedCommand::class, ['--quiet', '--seed', $seed_name]);
+            $this->executeCommand(MigrationsSeedCommand::class, ['--quiet', '--seed', $seed_name], $io);
         }
 
         $io->out("ExecuteAllMigrationsAndSeedsCommand end.");
