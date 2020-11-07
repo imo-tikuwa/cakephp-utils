@@ -31,6 +31,10 @@ class ExecuteAllMigrationsAndSeedsCommand extends Command
             'short' => 'c',
             'default' => 'default',
             'help' => 'The datasource connection to get data from.',
+        ])->addOption('clean', [
+            'help' => 'When this option is specified, all existing tables will be deleted before performing migration.',
+            'default' => false,
+            'boolean' => true,
         ]);
 
         return $parser;
@@ -47,11 +51,20 @@ class ExecuteAllMigrationsAndSeedsCommand extends Command
     {
         $io->out("ExecuteAllMigrationsAndSeedsCommand start.");
 
+        $connection = ConnectionManager::get($args->getOption('connection'));
+        $table_names = $connection->getSchemaCollection()->listTables();
+
+        // 全テーブル削除
+        if ($args->getOption('clean')) {
+            foreach ($table_names as $table_name) {
+                $connection->execute("DROP TABLE IF EXISTS {$table_name}");
+            }
+        }
+
         $io->out("execute 「migrations migrate」 command.");
         $this->executeCommand(MigrationsMigrateCommand::class, [], $io);
 
         $io->out("execute 「migrations seed」 command.");
-        $table_names = ConnectionManager::get($args->getOption('connection'))->getSchemaCollection()->listTables();
         foreach ($table_names as $table_name) {
             // seed name
             $seed_name = Inflector::camelize($table_name) . "Seed";
@@ -63,7 +76,7 @@ class ExecuteAllMigrationsAndSeedsCommand extends Command
             }
 
             $io->out("execute {$table_name}'s seed.");
-            $this->executeCommand(MigrationsSeedCommand::class, ['--quiet', '--seed', $seed_name], $io);
+            $this->executeCommand(MigrationsSeedCommand::class, ['--quiet', '--seed', $seed_name]);
         }
 
         $io->out("ExecuteAllMigrationsAndSeedsCommand end.");
