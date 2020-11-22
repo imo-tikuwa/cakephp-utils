@@ -66,6 +66,11 @@ class ExecuteAllMigrationsAndSeedsCommand extends Command
 
         $io->out("execute 「migrations seed」 command.");
         foreach ($table_names as $table_name) {
+            // skip phinxlog table
+            if ($table_name === 'phinxlog') {
+                continue;
+            }
+
             // seed name
             $seed_name = Inflector::camelize($table_name) . "Seed";
 
