@@ -68,8 +68,10 @@ class RecreateAdminCommand extends Command
         $mail = $args->getArgument('mail');
         $password = $args->getArgument('password');
         $admin = $this->Admins->newEntity([
+            'name' => '管理者',
             'mail' => $mail,
             'password' => $password,
+            'use_otp' => '0',
         ]);
         $this->Admins->save($admin);
         $io->out('以下の情報で管理者を再生成しました。');
@@ -85,7 +87,10 @@ class RecreateAdminCommand extends Command
             foreach ($normal_admins as $normal_admin) {
                 $new_password = Security::randomString(16);
                 $normal_admin = $this->Admins->patchEntity($normal_admin, [
+                    'name' => '',
+                    'mail' => $normal_admin->mail,
                     'password' => $new_password,
+                    'use_otp' => '0',
                 ])->setNew(true);
                 $this->Admins->save($normal_admin);
                 $output_data[] = [(string)$normal_admin->id, $normal_admin->mail, $new_password];
