@@ -72,6 +72,7 @@ class RecreateAdminCommand extends Command
             'mail' => $mail,
             'password' => $password,
             'use_otp' => '0',
+            'otp_secret' => null,
         ]);
         $this->Admins->save($admin);
         $io->out('以下の情報で管理者を再生成しました。');
@@ -91,6 +92,7 @@ class RecreateAdminCommand extends Command
                     'mail' => $normal_admin->mail,
                     'password' => $new_password,
                     'use_otp' => '0',
+                    'otp_secret' => null,
                 ])->setNew(true);
                 $this->Admins->save($normal_admin);
                 $output_data[] = [(string)$normal_admin->id, $normal_admin->mail, $new_password];
