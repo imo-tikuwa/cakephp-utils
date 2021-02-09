@@ -13,7 +13,7 @@ use Cake\Utility\Security;
 /**
  * RecreateAdmin command.
  *
- * トランケートして、id=1のスーパーユーザーを更新する
+ * トランケートして、id=1の管理者を更新する
  * 一般ユーザーがいたら新しいパスワードを再設定して保存しなおす
  *
  * .envのSECURITY_SALT不一致なんかでログインできなくなったときに使うこと
