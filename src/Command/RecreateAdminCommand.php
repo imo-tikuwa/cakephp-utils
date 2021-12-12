@@ -53,7 +53,7 @@ class RecreateAdminCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
-        $this->loadModel('Admins');
+        $this->Admins = $this->fetchTable('Admins');
 
         // 一般ユーザー取得
         $normal_admins = $this->Admins->find()->where([$this->Admins->aliasField('id <>') => 1])->toArray();

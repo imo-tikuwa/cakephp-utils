@@ -16,7 +16,7 @@ use Cake\Console\Helper;
  * ```
  * public function execute(Arguments $args, ConsoleIo $io)
  * {
- *   $this->loadModel('Articles');
+ *   $this->Articles = $this->fetchTable('Articles');
  *
  *   $entity = $this->Articles->find()->first();
  *   $io->helper('Utilities.Entity')->output($entity);
