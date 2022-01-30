@@ -88,7 +88,7 @@ class RecreateAdminCommand extends Command
             foreach ($normal_admins as $normal_admin) {
                 $new_password = Security::randomString(16);
                 $normal_admin = $this->Admins->patchEntity($normal_admin, [
-                    'name' => '',
+                    'name' => $normal_admin->name,
                     'mail' => $normal_admin->mail,
                     'password' => $new_password,
                     'use_otp' => '0',
